@@ -1568,6 +1568,13 @@ body {
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogItCi0LDQutGB0LgiLAogICJzaG9ydF9uYW1lIjogItCi0LDQutGB0LgiLAogICJzdGFydF91cmwiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMyZjRmNGYiLAogICJ0aGVtZV9jb2xvciI6ICIjMmY0ZjRmIiwKICAiaWNvbnMiOiBbXQp9">
+<link rel="manifest" href="manifest.json">
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js');
+}
+</script>
 </head>
 <body>
 
