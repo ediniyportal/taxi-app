@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="theme-color" content="#2f4f4f">
+<title>Такси Финансы</title>
+
+<style>
+/* =========================================================
+   01. ROOT / ЦВЕТА / РАЗМЕРЫ
+   ========================================================= */
+:root{
+  --bg:#2f4f4f;
+  --line:rgba(220,230,230,.65);
+  --white:#ffffff;
+  --off:rgba(255,255,255,.48);
+  --top-main:95px;
+  --top-small:57px;
+  --nav-h:57px;
+}
+
+/* =========================================================
+   02. RESET / БАЗА
+   ========================================================= */
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,
+body{
+  margin:0;
+  width:100%;
+  min-height:100%;
+
+  overflow-x:hidden;
+  overflow-y:auto;
+
+  background:var(--bg);
+  color:var(--white);
+
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+
+  overscroll-behavior-y:none;
+}
+
+button{
+  border:0;
+  background:transparent;
+  padding:0;
+  margin:0;
+  color:inherit;
+  font:inherit;
+}
+
+/* =========================================================
+   03. APP CONTAINER
+   ========================================================= */
+.app{
+  width:100vw;
+
+  min-height:calc(100dvh + 2px);
+
+  overflow:visible;
+
+  background:var(--bg);
+}
+
+/* =========================================================
+   04. ЕДИНЫЙ ЗАКРЕПЛЕННЫЙ ВЕРХНИЙ БЛОК
+   ========================================================= */
+.app-header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:1000;
+  height:var(--top-small);
+  background:var(--bg);
+  border-bottom:1px solid var(--line);
+}
+
+.app-header.main{
+  height:var(--top-main);
+}
+/* =========================================================
+   04.1. ВИЗУАЛ ВЕРХНЕГО БЛОКА НА ГЛАВНОЙ
+   ========================================================= */
+
+.main-header-content{
+  display:none;
+  width:100%;
+  height:100%;
+  padding:4mm 4mm 0 4mm;
+}
+
+.app-header.main .main-header-content{
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+}
+
+.main-header-row{
+  height:58px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+}
+
+.main-date-left{
+  display:flex;
+  align-items:flex-start;
+  min-width:0;
+}
+
+.main-day-number{
+  font-size:50px;
+  font-weight:300;
+  line-height:.94;
+  letter-spacing:-1px;
+  color:#ffffff;
+}
+
+.main-date-divider{
+  width:1px;
+  height:34px;
+  margin-top:6px;
+  margin-left:2mm;
+  margin-right:2mm;
+  background:rgba(255,255,255,.42);
+  flex:0 0 auto;
+}
+
+.main-date-text{
+  padding-top:5px;
+}
+
+.main-weekday{
+  font-size:17px;
+  font-weight:500;
+  line-height:1.05;
+  white-space:nowrap;
+  color:#ffffff;
+}
+
+.main-month-year{
+  margin-top:5px;
+  font-size:14px;
+  line-height:1;
+  color:rgba(255,255,255,.72);
+}
+
+.main-clock{
+  font-size:50px;
+  font-weight:300;
+  line-height:.94;
+  letter-spacing:-1px;
+  color:#ffffff;
+  white-space:nowrap;
+  margin-top:0;
+  margin-left:15mm;
+}
+
+.main-period-tabs{
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  gap:4mm;
+
+  margin-top:calc(4mm - 10px);
+  margin-bottom:4mm;
+
+  width:100%;
+
+  overflow:visible;
+
+  flex:0 0 auto;
+}
+
+.period-tab{
+  height:5mm;
+  min-height:19px;
+
+  flex:1 1 0;
+
+  padding:0;
+
+  border-radius:10px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:11px;
+  font-weight:500;
+  line-height:1;
+
+  text-transform:uppercase;
+
+  color:rgba(255,255,255,.58);
+
+  background:linear-gradient(
+    180deg,
+    rgba(86,126,122,.92),
+    rgba(42,75,75,.98)
+  );
+
+  border:1px solid rgba(205,232,228,.24);
+
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.18),
+    inset 0 -1px 2px rgba(0,0,0,.30),
+    0 1px 2px rgba(0,0,0,.35);
+}
+
+.period-tab.active{
+  color:#ffffff;
+  border-color:rgba(255,255,255,.38);
+}
+/* =========================================================
+   05. ТЕЛО ОТКРЫТЫХ СТРАНИЦ
+   ========================================================= */
+.viewport{
+  position:absolute;
+  left:0;
+  right:0;
+  top:var(--top-small);
+  bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));
+
+  overflow-x:hidden;
+  overflow-y:auto;
+
+  background:var(--bg);
+
+  -webkit-overflow-scrolling:touch;
+}
+
+.viewport.main{
+  top:var(--top-main);
+}
+
+.track{
+  width:500vw;
+  min-height:100%;
+
+  display:flex;
+
+  transition:transform .22s ease;
+}
+
+.page{
+  flex:0 0 100vw;
+  width:100vw;
+  min-height:100%;
+
+  overflow:visible;
+
+  background:var(--bg);
+}
+
+/* =========================================================
+   06. ЗАКРЫТЫЕ СТРАНИЦЫ
+   ========================================================= */
+.closed-page{
+  display:none;
+  position:fixed;
+  left:0;
+  right:0;
+  top:var(--top-small);
+  bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));
+  z-index:700;
+  overflow-y:auto;
+  overflow-x:hidden;
+  background:var(--bg);
+  -webkit-overflow-scrolling:touch;
+}
+
+.closed-page.active{
+  display:block;
+}
+
+/* =========================================================
+   07. ЕДИНЫЙ ЗАКРЕПЛЕННЫЙ НИЖНИЙ БЛОК НАВИГАЦИИ
+   ========================================================= */
+.bottom-nav{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:1001;
+  height:calc(var(--nav-h) + env(safe-area-inset-bottom));
+padding-bottom:env(safe-area-inset-bottom);
+  background:var(--bg);
+  border-top:1px solid var(--line);
+  display:flex;
+}
+
+.nav-btn{
+  width:20%;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+  color:var(--off);
+  font-size:13px;
+  font-weight:400;
+}
+
+.nav-btn.active{
+  color:var(--white);
+}
+
+.nav-btn svg{
+  width:27px;
+  height:27px;
+  stroke:currentColor;
+  fill:none;
+  stroke-width:1.55;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.calendar-num{
+  font-size:9px;
+  font-weight:700;
+  fill:currentColor;
+  stroke:none;
+}
+
+.battery-fill{
+  fill:currentColor;
+  stroke:none;
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+  <!-- =======================================================
+       08. ВЕРХНИЙ БЛОК
+       ======================================================= -->
+  <header class="app-header main" id="appHeader">
+
+  <div class="main-header-content" id="mainHeaderContent">
+
+    <div class="main-header-row">
+
+      <div class="main-date-left">
+        <div class="main-day-number" id="mainDayNumber">18</div>
+
+        <div class="main-date-divider"></div>
+
+        <div class="main-date-text">
+          <div class="main-weekday" id="mainWeekday">Понедельник</div>
+          <div class="main-month-year" id="mainMonthYear">мая 2026</div>
+        </div>
+      </div>
+
+      <div class="main-clock" id="mainClock">11:03</div>
+
+    </div>
+
+    <div class="main-period-tabs">
+
+      <button class="period-tab active" data-period="day" type="button">ДЕНЬ</button>
+      <button class="period-tab" data-period="week" type="button">НЕДЕЛЯ</button>
+      <button class="period-tab" data-period="month" type="button">МЕСЯЦ</button>
+      <button class="period-tab" data-period="year" type="button">ГОД</button>
+
+    </div>
+
+  </div>
+
+</header>
+
+  <!-- =======================================================
+       09. ПЯТЬ ОТКРЫТЫХ СТРАНИЦ
+       ======================================================= -->
+  <main class="viewport main" id="viewport">
+    <div class="track" id="track">
+      <section class="page" data-page="home"></section>
+      <section class="page" data-page="balance"></section>
+      <section class="page" data-page="budget"></section>
+      <section class="page" data-page="reports"></section>
+      <section class="page" data-page="more"></section>
+    </div>
+  </main>
+
+  <!-- =======================================================
+       10. ЗАКРЫТЫЕ СТРАНИЦЫ
+       ======================================================= -->
+  <section class="closed-page" id="closed-rideEditor"></section>
+  <section class="closed-page" id="closed-expensesEditor"></section>
+  <section class="closed-page" id="closed-leftWellEditor"></section>
+  <section class="closed-page" id="closed-goalEditor"></section>
+  <section class="closed-page" id="closed-rightWellEditor"></section>
+
+  <!-- =======================================================
+       11. ЕДИНАЯ НИЖНЯЯ НАВИГАЦИЯ
+       ======================================================= -->
+  <nav class="bottom-nav">
+
+    <button class="nav-btn active" data-target="home" type="button">
+      <svg viewBox="0 0 34 34" aria-hidden="true">
+        <rect x="6.5" y="7.5" width="21" height="21" rx="1.1"/>
+        <path d="M6.5 13h21M11.5 4.7v6.1M22.5 4.7v6.1"/>
+        <text x="17" y="24" text-anchor="middle" class="calendar-num" id="navDay">18</text>
+      </svg>
+      <span>Главная</span>
+    </button>
+
+    <button class="nav-btn" data-target="balance" type="button">
+      <svg viewBox="0 0 34 34" aria-hidden="true">
+        <path d="M17 7.2v20.3"/>
+        <circle cx="17" cy="8.2" r="2.2"/>
+        <path d="M8.8 11.4h16.4"/>
+        <path d="M17 11.4 10.4 20.2"/>
+        <path d="M17 11.4 23.6 20.2"/>
+        <path d="M7.2 20.2h6.4"/>
+        <path d="M20.4 20.2h6.4"/>
+        <path d="M7.4 20.2c.5 2.5 1.8 3.7 3 3.7s2.5-1.2 3-3.7"/>
+        <path d="M20.6 20.2c.5 2.5 1.8 3.7 3 3.7s2.5-1.2 3-3.7"/>
+        <path d="M11.2 27.6h11.6"/>
+      </svg>
+      <span>Баланс</span>
+    </button>
+
+    <button class="nav-btn" data-target="budget" type="button">
+      <svg viewBox="0 0 34 34" aria-hidden="true">
+        <rect x="11" y="8.4" width="12" height="20" rx="2"/>
+        <rect x="14.2" y="5.2" width="5.6" height="3.2" rx="1"/>
+        <rect class="battery-fill" x="12.8" y="18.5" width="8.4" height="8.1" rx="1"/>
+      </svg>
+      <span>Бюджет</span>
+    </button>
+
+    <button class="nav-btn" data-target="reports" type="button">
+      <svg viewBox="0 0 34 34" aria-hidden="true">
+        <path d="M8.4 27V17.4M14.1 27V11.3M19.8 27V6.9M25.5 27V14.3M6.7 27h21.4"/>
+      </svg>
+      <span>Отчеты</span>
+    </button>
+
+    <button class="nav-btn" data-target="more" type="button">
+      <svg viewBox="0 0 34 34" aria-hidden="true">
+        <rect x="8.6" y="6.8" width="16.2" height="21.1" rx="1.3"/>
+        <rect x="11.2" y="9.8" width="16.2" height="21.1" rx="1.3"/>
+        <path d="M14.5 15.2h8.7M14.5 20h8.7M14.5 24.8h6.2"/>
+      </svg>
+      <span>Еще</span>
+    </button>
+
+  </nav>
+
+</div>
+
+<script>
+/* =========================================================
+   12. СПИСОК ОТКРЫТЫХ СТРАНИЦ
+   ========================================================= */
+const pages = ["home","balance","budget","reports","more"];
+
+/* =========================================================
+   13. СОСТОЯНИЕ ПРИЛОЖЕНИЯ
+   ========================================================= */
+let current = "home";
+let closed = null;
+let sx = 0;
+let sy = 0;
+let currentPeriod = "day";
+
+/* =========================================================
+   14. ОСНОВНЫЕ DOM-ЭЛЕМЕНТЫ
+   ========================================================= */
+const header = document.getElementById("appHeader");
+const viewport = document.getElementById("viewport");
+const track = document.getElementById("track");
+
+/* =========================================================
+   15. ЗАКРЫТИЕ ЗАКРЫТЫХ СТРАНИЦ
+   ========================================================= */
+function closeClosed(){
+  document.querySelectorAll(".closed-page").forEach(page => {
+    page.classList.remove("active");
+  });
+  closed = null;
+}
+
+/* =========================================================
+   16. ПЕРЕКЛЮЧЕНИЕ ВЫСОТЫ ВЕРХНЕГО БЛОКА
+   ========================================================= */
+function setHeader(page){
+  const isHome = page === "home";
+  header.classList.toggle("main", isHome);
+  viewport.classList.toggle("main", isHome);
+}
+
+/* =========================================================
+   17. ПОДСВЕТКА АКТИВНОЙ КНОПКИ НАВИГАЦИИ
+   ========================================================= */
+function activateNav(page){
+  document.querySelectorAll(".nav-btn").forEach(button => {
+    button.classList.toggle("active", button.dataset.target === page);
+  });
+}
+
+/* =========================================================
+   18. ПЕРЕХОД НА ОТКРЫТУЮ СТРАНИЦУ
+   ========================================================= */
+function showPage(page){
+  const index = pages.indexOf(page);
+  if(index < 0) return;
+
+  closeClosed();
+  current = page;
+
+  track.style.transform = `translateX(-${index * 100}vw)`;
+
+  setHeader(page);
+  activateNav(page);
+}
+
+/* =========================================================
+   19. ОТКРЫТИЕ ЗАКРЫТОЙ СТРАНИЦЫ
+   ========================================================= */
+function openClosed(id){
+  closeClosed();
+
+  const page = document.getElementById("closed-" + id);
+  if(!page) return;
+
+  closed = id;
+  page.classList.add("active");
+
+  header.classList.remove("main");
+  viewport.classList.remove("main");
+}
+
+/* =========================================================
+   20. ОБНОВЛЕНИЕ ЧИСЛА В ИКОНКЕ КАЛЕНДАРЯ
+   ========================================================= */
+function updateDate(){
+
+  const now = new Date();
+
+  const weekdays = [
+    "Воскресенье",
+    "Понедельник",
+    "Вторник",
+    "Среда",
+    "Четверг",
+    "Пятница",
+    "Суббота"
+  ];
+
+  const months = [
+    "января",
+    "февраля",
+    "марта",
+    "апреля",
+    "мая",
+    "июня",
+    "июля",
+    "августа",
+    "сентября",
+    "октября",
+    "ноября",
+    "декабря"
+  ];
+
+  const day = now.getDate();
+
+  const hours = String(now.getHours()).padStart(2,"0");
+
+  const minutes = String(now.getMinutes()).padStart(2,"0");
+
+  document.getElementById("navDay").textContent = day;
+
+  document.getElementById("mainDayNumber").textContent = day;
+
+  document.getElementById("mainWeekday").textContent =
+    weekdays[now.getDay()];
+
+  document.getElementById("mainMonthYear").textContent =
+    months[now.getMonth()] + " " + now.getFullYear();
+
+  document.getElementById("mainClock").textContent =
+    hours + ":" + minutes;
+}
+/* =========================================================
+   20.1. ТЕКУЩИЙ ПЕРИОД ГЛАВНОЙ СТРАНИЦЫ
+   ========================================================= */
+function setMainPeriod(period){
+
+  currentPeriod = period;
+
+  document.querySelectorAll(".period-tab").forEach(button => {
+
+    button.classList.toggle(
+      "active",
+      button.dataset.period === period
+    );
+
+  });
+
+  renderHomeByPeriod(period);
+
+}
+
+/* =========================================================
+   20.2. ОБНОВЛЕНИЕ ГЛАВНОЙ СТРАНИЦЫ ПО ПЕРИОДУ
+   ========================================================= */
+function renderHomeByPeriod(period){
+
+  /*
+    ПОКА ПУСТО.
+
+    ПОЗЖЕ СЮДА БУДЕТ ПОДКЛЮЧАТЬСЯ:
+    - доход;
+    - расход;
+    - поездки;
+    - цели;
+    - колодцы;
+    - статистика;
+    - отчеты.
+
+    И все это будет меняться
+    в зависимости от:
+    day / week / month / year
+  */
+
+}
+/* =========================================================
+   21. КЛИКИ ПО НИЖНЕЙ НАВИГАЦИИ
+   ========================================================= */
+document.querySelectorAll(".nav-btn").forEach(button => {
+  button.addEventListener("click", () => {
+    showPage(button.dataset.target);
+  });
+});
+/* =========================================================
+   21.1. КЛИКИ ПО КНОПКАМ ПЕРИОДА
+   ========================================================= */
+document.querySelectorAll(".period-tab").forEach(button => {
+
+  button.addEventListener("click", () => {
+
+    setMainPeriod(button.dataset.period);
+
+  });
+
+});
+/* =========================================================
+   22. СВАЙП: НАЧАЛО
+   ========================================================= */
+viewport.addEventListener("touchstart", event => {
+  if(closed) return;
+
+  sx = event.touches[0].clientX;
+  sy = event.touches[0].clientY;
+},{passive:true});
+
+/* =========================================================
+   23. СВАЙП: ЗАВЕРШЕНИЕ
+   ========================================================= */
+viewport.addEventListener("touchend", event => {
+  if(closed) return;
+
+  const dx = event.changedTouches[0].clientX - sx;
+  const dy = event.changedTouches[0].clientY - sy;
+
+  if(Math.abs(dx) < 55) return;
+  if(Math.abs(dx) < Math.abs(dy)) return;
+
+  let index = pages.indexOf(current);
+
+  if(dx < 0) index = Math.min(pages.length - 1, index + 1);
+  if(dx > 0) index = Math.max(0, index - 1);
+
+  showPage(pages[index]);
+},{passive:true});
+
+/* =========================================================
+   24. СТАРТ ПРИЛОЖЕНИЯ
+   ========================================================= */
+updateDate();
+
+setInterval(updateDate, 30000);
+
+showPage("home");
+
+setMainPeriod("day");
+</script>
+</body>
+</html>
