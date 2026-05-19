@@ -1,0 +1,2278 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="theme-color" content="#2f4f4f">
+<title>Такси Финансы</title>
+
+<style>
+/* =========================================================
+   01. ROOT / ЦВЕТА / РАЗМЕРЫ
+   ========================================================= */
+:root{
+  --bg:#2f4f4f;
+  --line:rgba(220,230,230,.65);
+  --white:#ffffff;
+  --off:rgba(255,255,255,.48);
+  --top-main:95px;
+  --top-small:57px;
+  --nav-h:57px;
+}
+
+/* =========================================================
+   02. RESET / БАЗА
+   ========================================================= */
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,
+body{
+  margin:0;
+  width:100%;
+  min-height:100%;
+
+  overflow-x:hidden;
+  overflow-y:auto;
+
+  background:var(--bg);
+  color:var(--white);
+
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+
+  overscroll-behavior-y:auto;
+}
+
+button{
+  border:0;
+  background:transparent;
+  padding:0;
+  margin:0;
+  color:inherit;
+  font:inherit;
+}
+
+/* =========================================================
+   03. APP CONTAINER
+   ========================================================= */
+.app{
+  width:100vw;
+
+  min-height:calc(100dvh + 2px);
+
+  overflow:visible;
+
+  background:var(--bg);
+}
+
+/* =========================================================
+   04. ЕДИНЫЙ ЗАКРЕПЛЕННЫЙ ВЕРХНИЙ БЛОК
+   ========================================================= */
+.app-header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:1000;
+  height:var(--top-small);
+  background:var(--bg);
+  border-bottom:1px solid var(--line);
+}
+
+.app-header.main{
+  height:var(--top-main);
+}
+/* =========================================================
+   04.1. ВИЗУАЛ ВЕРХНЕГО БЛОКА НА ГЛАВНОЙ
+   ========================================================= */
+
+.main-header-content{
+  display:none;
+  width:100%;
+  height:100%;
+  padding:4mm 4mm 0 4mm;
+}
+.header-page-title{
+  display:none;
+  width:100%;
+  height:100%;
+
+  align-items:center;
+  justify-content:center;
+
+  font-size:17px;
+  font-weight:500;
+  line-height:1;
+
+  color:#ffffff;
+  text-transform:uppercase;
+}
+
+.app-header:not(.main) .header-page-title{
+  display:flex;
+}
+
+.app-header.main .main-header-content{
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+}
+
+.main-header-row{
+  height:58px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+}
+
+.main-date-left{
+  display:flex;
+  align-items:flex-start;
+  min-width:0;
+}
+
+.main-day-number{
+  font-size:50px;
+  font-weight:300;
+  line-height:.94;
+  letter-spacing:-1px;
+  color:#ffffff;
+}
+
+.main-date-divider{
+  width:1px;
+  height:34px;
+  margin-top:6px;
+  margin-left:2mm;
+  margin-right:2mm;
+  background:rgba(255,255,255,.42);
+  flex:0 0 auto;
+}
+
+.main-date-text{
+  padding-top:5px;
+}
+
+.main-weekday{
+  font-size:17px;
+  font-weight:500;
+  line-height:1.05;
+  white-space:nowrap;
+  color:#ffffff;
+}
+
+.main-month-year{
+  margin-top:5px;
+  font-size:14px;
+  line-height:1;
+  color:rgba(255,255,255,.72);
+}
+
+.main-clock{
+  font-size:50px;
+  font-weight:300;
+  line-height:.94;
+  letter-spacing:-1px;
+  color:#ffffff;
+  white-space:nowrap;
+  margin-top:0;
+  margin-left:15mm;
+}
+
+.main-period-tabs{
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  gap:4mm;
+
+  margin-top:calc(4mm - 10px);
+  margin-bottom:4mm;
+
+  width:100%;
+
+  overflow:visible;
+
+  flex:0 0 auto;
+}
+
+.period-tab{
+  height:5mm;
+  min-height:19px;
+
+  flex:1 1 0;
+
+  padding:0;
+
+  border-radius:10px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:11px;
+  font-weight:500;
+  line-height:1;
+
+  text-transform:uppercase;
+
+  color:rgba(255,255,255,.58);
+
+  background:linear-gradient(
+    180deg,
+    rgba(86,126,122,.92),
+    rgba(42,75,75,.98)
+  );
+
+  border:1px solid rgba(205,232,228,.24);
+
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.18),
+    inset 0 -1px 2px rgba(0,0,0,.30),
+    0 1px 2px rgba(0,0,0,.35);
+}
+
+.period-tab.active{
+  color:#ffffff;
+  border-color:rgba(255,255,255,.38);
+}
+/* =========================================================
+   05. ТЕЛО ОТКРЫТЫХ СТРАНИЦ
+   ========================================================= */
+.viewport{
+  position:absolute;
+  left:0;
+  right:0;
+  top:var(--top-small);
+  bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));
+
+  overflow-x:hidden;
+  overflow-y:auto;
+
+  background:var(--bg);
+
+  -webkit-overflow-scrolling:touch;
+}
+
+.viewport.main{
+  top:var(--top-main);
+}
+
+.track{
+  width:500vw;
+  min-height:100%;
+
+  display:flex;
+
+  transition:transform .22s ease;
+}
+
+.page{
+  flex:0 0 100vw;
+  width:100vw;
+  min-height:100%;
+
+  overflow:visible;
+
+  background:var(--bg);
+}
+
+.home-scroll-content{
+  width:100%;
+  min-height:100%;
+  padding:3px;
+
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+
+.home-scroll-block{
+  width:100%;
+  min-height:120px;
+
+  border:1px solid var(--line);
+  background:var(--bg);
+}
+.home-image-block{
+  position:relative;
+  padding:0;
+  overflow:hidden;
+  border:none;
+}
+
+.home-image-block img{
+  display:block;
+  width:100%;
+  height:auto;
+}
+
+.home-well{
+  position:absolute;
+  top:50%;
+  transform:translateY(calc(-50% + 6px));
+
+  width:25.5%;
+  aspect-ratio:1 / 1;
+
+  border-radius:50%;
+
+  background:
+    radial-gradient(circle at 50% 58%,
+      rgba(48,89,86,.98) 0%,
+      rgba(24,57,56,.98) 56%,
+      rgba(2,18,20,.98) 100%
+    );
+
+  border:2px solid rgba(170,210,205,.34);
+
+  box-shadow:
+    inset 0 8px 16px rgba(255,255,255,.16),
+    inset 0 -18px 28px rgba(0,0,0,.42),
+    0 8px 14px rgba(0,0,0,.38);
+}
+
+.home-well.left{
+  left:5%;
+}
+
+.home-well.right{
+  right:5%;
+}
+.left-well-content{
+  position:absolute;
+  inset:0;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+
+  padding:12%;
+
+  text-align:center;
+}
+
+.left-well-day{
+  width:100%;
+
+  font-size:clamp(24px,6vw,34px);
+  font-weight:500;
+  line-height:1;
+
+  color:#ffffff;
+
+  text-shadow:
+    0 2px 4px rgba(0,0,0,.75);
+
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.left-well-total{
+  width:100%;
+
+  margin-top:8px;
+
+  font-size:clamp(11px,3vw,16px);
+  font-weight:500;
+  line-height:1;
+
+  color:rgba(255,255,255,.88);
+
+  text-shadow:
+    0 2px 4px rgba(0,0,0,.75);
+
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.left-editor-topbar{
+  width:100%;
+  height:57px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:17px;
+  font-weight:500;
+  letter-spacing:.6px;
+
+  color:#ffffff;
+}
+
+.left-editor-card{
+  width:100%;
+  min-height:260px;
+
+  padding:16px;
+
+  border:none;
+  background:var(--bg);
+
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.left-editor-label{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+
+  color:rgba(255,255,255,.86);
+
+  font-size:14px;
+  font-weight:500;
+}
+
+.left-editor-input{
+  width:100%;
+  height:44px;
+
+  padding:0 14px;
+
+  border-radius:12px;
+  border:1px solid rgba(220,230,230,.45);
+
+  background:rgba(20,45,45,.75);
+  color:#ffffff;
+
+  font-size:20px;
+  font-weight:500;
+
+  outline:none;
+
+  box-shadow:
+    inset 0 2px 5px rgba(0,0,0,.35),
+    inset 0 1px 1px rgba(255,255,255,.12);
+}
+
+.left-editor-preview-row{
+  margin-top:0;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+}
+
+.editor-preview-well{
+  position:relative;
+  left:auto;
+  right:auto;
+  top:auto;
+  transform:none;
+
+  width:110px;
+  flex:0 0 110px;
+}
+
+.engine-save-btn{
+  width:86px;
+  height:86px;
+
+  border-radius:50%;
+
+  color:#ffffff;
+
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.8px;
+
+  background:
+    radial-gradient(circle at 50% 38%,
+      rgba(82,126,122,.98) 0%,
+      rgba(47,79,79,.98) 52%,
+      rgba(15,39,40,.98) 100%
+    );
+
+  border:2px solid rgba(210,235,232,.36);
+
+  box-shadow:
+    inset 0 8px 15px rgba(255,255,255,.16),
+    inset 0 -18px 26px rgba(0,0,0,.42),
+    0 8px 14px rgba(0,0,0,.4);
+}
+.home-goal-widget{
+  position:absolute;
+  left:50%;
+  top:2px;
+  transform:translateX(-50%);
+
+  width:150px;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+
+  background:none;
+  border:none;
+  box-shadow:none;
+}
+
+.home-goal-pin{
+  width:34px;
+  height:34px;
+
+  fill:#8f9898;
+
+  filter:
+    drop-shadow(0 2px 3px rgba(0,0,0,.55));
+}
+
+.home-goal-widget.done .home-goal-pin{
+  fill:#22d889;
+
+  filter:
+    drop-shadow(0 0 10px rgba(34,216,137,.9))
+    drop-shadow(0 2px 3px rgba(0,0,0,.55));
+}
+
+.home-goal-title{
+  margin-top:5px;
+
+  color:#ffffff;
+
+  font-size:16px;
+  font-weight:600;
+  line-height:1;
+
+  text-align:center;
+  white-space:nowrap;
+
+  text-shadow:0 2px 4px rgba(0,0,0,.75);
+}
+.home-well-content{
+  width:100%;
+  height:100%;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+
+  color:#ffffff;
+  text-shadow:0 2px 3px rgba(0,0,0,.55);
+}
+
+.home-well-main{
+  font-size:26px;
+  font-weight:400;
+  line-height:1;
+  white-space:nowrap;
+}
+
+.home-well-main span{
+  font-size:18px;
+  margin-left:3px;
+}
+
+.home-well-sub{
+  margin-top:12px;
+  font-size:16px;
+  font-weight:400;
+  line-height:1;
+  white-space:nowrap;
+  color:rgba(255,255,255,.86);
+}
+/* =========================================================
+   06. ЗАКРЫТЫЕ СТРАНИЦЫ
+   ========================================================= */
+.closed-page{
+  display:none;
+  position:fixed;
+  left:0;
+  right:0;
+  top:var(--top-small);
+  bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));
+  z-index:700;
+  overflow-y:auto;
+  overflow-x:hidden;
+  background:var(--bg);
+  -webkit-overflow-scrolling:touch;
+}
+
+.closed-page.active{
+  display:block;
+}
+
+/* =========================================================
+   07. ЕДИНЫЙ ЗАКРЕПЛЕННЫЙ НИЖНИЙ БЛОК НАВИГАЦИИ
+   ========================================================= */
+.bottom-nav{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:1001;
+  height:calc(var(--nav-h) + env(safe-area-inset-bottom));
+padding-bottom:env(safe-area-inset-bottom);
+  background:var(--bg);
+  border-top:1px solid var(--line);
+  display:flex;
+}
+
+.nav-btn{
+  width:20%;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+  color:var(--off);
+  font-size:13px;
+  font-weight:400;
+}
+
+.nav-btn.active{
+  color:var(--white);
+}
+
+.nav-btn svg{
+  width:27px;
+  height:27px;
+  stroke:currentColor;
+  fill:none;
+  stroke-width:1.55;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.calendar-num{
+  font-size:9px;
+  font-weight:700;
+  fill:currentColor;
+  stroke:none;
+}
+
+.battery-fill{
+  fill:currentColor;
+  stroke:none;
+}
+.right-well-content{
+  position:absolute;
+  inset:0;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  padding:13%;
+
+  text-align:center;
+}
+
+.right-well-km{
+  width:100%;
+
+  font-size:clamp(24px,6vw,34px);
+  font-weight:500;
+  line-height:1;
+
+  color:#ffffff;
+
+  text-shadow:
+    0 2px 4px rgba(0,0,0,.75);
+
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.home-well.right.warning{
+  border-color:rgba(255,55,55,.95);
+
+  box-shadow:
+    inset 0 8px 16px rgba(255,255,255,.16),
+    inset 0 -18px 28px rgba(0,0,0,.42),
+    0 0 14px rgba(255,35,35,.75),
+    0 8px 14px rgba(0,0,0,.38);
+}
+
+.right-well-alert{
+  width:100%;
+  height:100%;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+
+  color:#ffffff;
+}
+
+.right-well-alert svg{
+  width:25px;
+  height:25px;
+
+  stroke:#ffffff;
+  fill:none;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+
+  filter:drop-shadow(0 2px 3px rgba(0,0,0,.7));
+}
+
+.right-well-alert-title{
+  width:100%;
+
+  font-size:clamp(8px,2.45vw,13px);
+  font-weight:600;
+  line-height:1.05;
+
+  text-align:center;
+
+  display:-webkit-box;
+  -webkit-line-clamp:3;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+
+  text-shadow:0 2px 4px rgba(0,0,0,.75);
+}
+
+.right-editor-card{
+  width:100%;
+  min-height:260px;
+
+  padding:16px;
+
+  border:none;
+  background:var(--bg);
+
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.right-editor-label{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+
+  color:rgba(255,255,255,.86);
+
+  font-size:14px;
+  font-weight:500;
+}
+
+.right-editor-input{
+  width:100%;
+  height:44px;
+
+  padding:0 14px;
+
+  border-radius:12px;
+  border:1px solid rgba(220,230,230,.45);
+
+  background:rgba(20,45,45,.75);
+  color:#ffffff;
+
+  font-size:20px;
+  font-weight:500;
+
+  outline:none;
+
+  box-shadow:
+    inset 0 2px 5px rgba(0,0,0,.35),
+    inset 0 1px 1px rgba(255,255,255,.12);
+}
+
+.right-editor-save-row{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  padding:4px 0 2px 0;
+}
+
+.service-list{
+  width:100%;
+
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+
+  margin-top:4px;
+}
+
+.service-item{
+  width:100%;
+
+  padding:12px 14px;
+
+  border-radius:14px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(71,111,108,.9),
+      rgba(32,68,68,.98)
+    );
+
+  border:1px solid rgba(220,230,230,.34);
+
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.16),
+    inset 0 -2px 4px rgba(0,0,0,.28),
+    0 4px 9px rgba(0,0,0,.24);
+}
+
+.service-item.warning{
+  border-color:rgba(255,70,70,.9);
+}
+
+.service-item-title{
+  font-size:15px;
+  font-weight:600;
+  line-height:1.2;
+
+  color:#ffffff;
+}
+
+.service-item-km{
+  margin-top:7px;
+
+  font-size:13px;
+  font-weight:500;
+  line-height:1;
+
+  color:rgba(255,255,255,.78);
+}
+
+.service-modal{
+  display:none;
+
+  position:fixed;
+  inset:0;
+
+  z-index:1200;
+
+  background:rgba(0,0,0,.48);
+
+  align-items:center;
+  justify-content:center;
+
+  padding:18px;
+}
+
+.service-modal.active{
+  display:flex;
+}
+
+.service-modal-card{
+  width:100%;
+  max-width:340px;
+
+  padding:16px;
+
+  border-radius:18px;
+
+  background:var(--bg);
+
+  border:1px solid rgba(220,230,230,.45);
+
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.14),
+    0 14px 28px rgba(0,0,0,.48);
+
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.service-modal-title{
+  width:100%;
+
+  margin-bottom:4px;
+
+  color:#ffffff;
+
+  font-size:17px;
+  font-weight:600;
+  line-height:1.25;
+
+  text-align:center;
+}
+
+.service-modal-btn{
+  width:100%;
+  height:54px;
+
+  border-radius:14px;
+
+  color:#ffffff;
+
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.7px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(86,126,122,.96),
+      rgba(32,68,68,.98)
+    );
+
+  border:1px solid rgba(220,230,230,.42);
+
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.18),
+    inset 0 -2px 4px rgba(0,0,0,.30),
+    0 4px 9px rgba(0,0,0,.30);
+}
+
+.service-modal-btn.secondary{
+  color:rgba(255,255,255,.78);
+}
+.engine-block{
+  position:relative;
+
+  width:100%;
+  height:355px;
+  min-height:355px;
+
+  border:none;
+  overflow:hidden;
+
+  background:#18484a;
+}
+
+/* ====================================================== */
+/* ГЛАВНАЯ КНОПКА */
+/* ====================================================== */
+
+.engine-main-circle{
+  position:absolute;
+  left:50%;
+  top:18px;
+  transform:translateX(-50%);
+
+  width:210px;
+  height:210px;
+
+  border-radius:50%;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+
+  padding-top:48px;
+
+  background:#18484a;
+
+  border:5px solid rgba(182,202,198,.42);
+
+  box-shadow:
+    inset 0 2px 3px rgba(255,255,255,.08),
+    inset 0 -8px 14px rgba(0,0,0,.28),
+    0 10px 18px rgba(0,0,0,.34);
+}
+
+.engine-main-circle::before{
+  content:"";
+
+  position:absolute;
+  inset:10px;
+
+  border-radius:50%;
+
+  border:2px solid rgba(130,165,160,.32);
+}
+
+/* ====================================================== */
+/* ТЕКСТ */
+/* ====================================================== */
+
+.engine-title{
+  position:relative;
+  z-index:2;
+
+  color:rgba(255,255,255,.62);
+
+  font-size:17px;
+  font-weight:700;
+  letter-spacing:7px;
+  line-height:1;
+}
+
+.engine-shift-counter{
+  position:relative;
+  z-index:2;
+
+  margin-top:34px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  gap:8px;
+
+  color:#ffffff;
+}
+
+.engine-shift-text{
+  font-size:24px;
+  font-weight:600;
+  line-height:1;
+}
+
+.engine-car-image{
+  width:56px;
+  height:auto;
+
+  object-fit:contain;
+}
+
+.engine-money{
+  position:relative;
+  z-index:2;
+
+  margin-top:12px;
+
+  color:#ffffff;
+
+  font-size:31px;
+  font-weight:600;
+  line-height:1;
+}
+
+.engine-shift-label{
+  position:relative;
+  z-index:2;
+
+  margin-top:30px;
+
+  color:#ffffff;
+
+  font-size:17px;
+  font-weight:700;
+  letter-spacing:4px;
+  line-height:1;
+}
+
+/* ====================================================== */
+/* ПОЛОСКА СТАРТ */
+/* ====================================================== */
+
+.engine-slot{
+  position:relative;
+  z-index:2;
+
+  width:76px;
+  height:9px;
+
+  margin-top:16px;
+
+  border-radius:30px;
+
+  background:#112f31;
+
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,.55);
+}
+
+.engine-send-btn.active .engine-slot{
+  background:#2dff6f;
+
+  box-shadow:
+    0 0 10px rgba(45,255,111,.9),
+    inset 0 1px 2px rgba(255,255,255,.34);
+}
+
+/* ====================================================== */
+/* БОКОВЫЕ КНОПКИ */
+/* ====================================================== */
+
+.engine-side-btn{
+  position:absolute;
+
+  width:78px;
+  height:78px;
+
+  border-radius:50%;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  color:#ffffff;
+
+  background:#18484a;
+
+  border:4px solid rgba(208,224,220,.62);
+
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.10),
+    inset 0 -10px 16px rgba(0,0,0,.30),
+    0 8px 14px rgba(0,0,0,.34);
+}
+
+.engine-plus-btn{
+  left:54px;
+  top:168px;
+
+  font-size:58px;
+  font-weight:300;
+  line-height:1;
+}
+
+.engine-change-btn{
+  right:54px;
+  top:168px;
+
+  font-size:14px;
+  font-weight:700;
+  letter-spacing:.5px;
+  line-height:1;
+}
+
+/* ====================================================== */
+/* КНОПКА СТАРТ */
+/* ====================================================== */
+
+.engine-send-btn{
+  position:absolute;
+  left:50%;
+  top:266px;
+  transform:translateX(-50%);
+
+  width:94px;
+  height:94px;
+
+  border-radius:50%;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  color:#ffffff;
+
+  font-size:14px;
+  font-weight:700;
+  letter-spacing:1.6px;
+
+  background:#18484a;
+
+  border:4px solid rgba(130,165,160,.42);
+
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.10),
+    inset 0 -10px 16px rgba(0,0,0,.28),
+    0 8px 14px rgba(0,0,0,.32);
+}
+
+.engine-title{
+  position:relative;
+  z-index:2;
+
+  color:rgba(255,255,255,.62);
+
+  font-size:18px;
+  font-weight:700;
+  letter-spacing:8px;
+  line-height:1;
+}
+
+.engine-shift-counter{
+  position:relative;
+  z-index:2;
+
+  margin-top:40px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  gap:8px;
+
+  color:#ffffff;
+}
+
+.engine-shift-text{
+  font-size:24px;
+  font-weight:600;
+  line-height:1;
+}
+
+.engine-car-image{
+  width:58px;
+  height:auto;
+
+  object-fit:contain;
+
+  filter:
+    drop-shadow(0 2px 3px rgba(0,0,0,.35));
+}
+
+.engine-money{
+  position:relative;
+  z-index:2;
+
+  margin-top:12px;
+
+  color:#ffffff;
+
+  font-size:34px;
+  font-weight:600;
+  line-height:1;
+}
+
+.engine-shift-label{
+  position:relative;
+  z-index:2;
+
+  margin-top:34px;
+
+  color:#ffffff;
+
+  font-size:18px;
+  font-weight:700;
+  letter-spacing:5px;
+  line-height:1;
+}
+
+.engine-slot{
+  position:relative;
+  z-index:2;
+
+  width:86px;
+  height:10px;
+
+  margin-top:18px;
+
+  border-radius:20px;
+
+  background:rgba(18,45,46,.9);
+
+  box-shadow:
+    inset 0 2px 5px rgba(0,0,0,.55),
+    0 1px 1px rgba(255,255,255,.12);
+}
+
+.engine-side-btn{
+  position:absolute;
+
+  width:86px;
+  height:86px;
+
+  border-radius:50%;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  color:#ffffff;
+
+  background:
+    radial-gradient(circle at 50% 38%,
+      rgba(76,117,114,.96) 0%,
+      rgba(43,78,77,.98) 58%,
+      rgba(24,52,53,1) 100%
+    );
+
+  border:4px solid rgba(210,225,222,.72);
+
+  box-shadow:
+    inset 0 7px 13px rgba(255,255,255,.12),
+    inset 0 -14px 22px rgba(0,0,0,.34),
+    0 8px 9px rgba(0,0,0,.34);
+}
+
+.engine-plus-btn{
+  left:52px;
+  top:178px;
+
+  font-size:62px;
+  font-weight:400;
+  line-height:1;
+}
+
+.engine-change-btn{
+  right:52px;
+  top:178px;
+
+  font-size:15px;
+  font-weight:700;
+  letter-spacing:.5px;
+  line-height:1;
+}
+
+.engine-send-btn{
+  position:absolute;
+  left:50%;
+  top:304px;
+  transform:translateX(-50%);
+
+  width:130px;
+  height:130px;
+
+  border-radius:50%;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  color:#ffffff;
+
+  font-size:15px;
+  font-weight:700;
+  letter-spacing:2px;
+
+  background:
+    radial-gradient(circle at 50% 38%,
+      rgba(72,111,108,.96) 0%,
+      rgba(42,78,77,.98) 58%,
+      rgba(24,52,53,1) 100%
+    );
+
+  border:4px solid rgba(120,158,155,.5);
+
+  box-shadow:
+    inset 0 7px 13px rgba(255,255,255,.10),
+    inset 0 -14px 22px rgba(0,0,0,.32),
+    0 8px 10px rgba(0,0,0,.30);
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+  <!-- =======================================================
+       08. ВЕРХНИЙ БЛОК
+       ======================================================= -->
+  <header class="app-header main" id="appHeader">
+
+  <div class="header-page-title" id="headerPageTitle"></div>
+
+  <div class="main-header-content" id="mainHeaderContent">
+
+    <div class="main-header-row">
+
+      <div class="main-date-left">
+        <div class="main-day-number" id="mainDayNumber">18</div>
+
+        <div class="main-date-divider"></div>
+
+        <div class="main-date-text">
+          <div class="main-weekday" id="mainWeekday">Понедельник</div>
+          <div class="main-month-year" id="mainMonthYear">мая 2026</div>
+        </div>
+      </div>
+
+      <div class="main-clock" id="mainClock">11:03</div>
+
+    </div>
+
+    <div class="main-period-tabs">
+
+      <button class="period-tab active" data-period="day" type="button">ДЕНЬ</button>
+      <button class="period-tab" data-period="week" type="button">НЕДЕЛЯ</button>
+      <button class="period-tab" data-period="month" type="button">МЕСЯЦ</button>
+      <button class="period-tab" data-period="year" type="button">ГОД</button>
+
+    </div>
+
+  </div>
+
+</header>
+
+  <!-- =======================================================
+       09. ПЯТЬ ОТКРЫТЫХ СТРАНИЦ
+       ======================================================= -->
+  <main class="viewport main" id="viewport">
+    <div class="track" id="track">
+      <section class="page" data-page="home">
+  <div class="home-scroll-content">
+    <div class="home-scroll-block home-image-block">
+  <img src="https://raw.githubusercontent.com/ediniyportal/taxi-app/0a1b67418200315bd4df16016e8ac301eca479ad/ChatGPT%20Image%208%20%D0%BC%D0%B0%D1%8F%202026%20%D0%B3.%2C%2000_20_58.png" alt="">
+
+  <div class="home-well left" onclick="openLeftWellEditor()">
+
+  <div class="left-well-content">
+
+    <div class="left-well-day">
+      155
+    </div>
+
+    <div class="left-well-total">
+      154954
+    </div>
+
+  </div>
+
+</div>
+
+<div class="home-goal-widget empty">
+  <svg class="home-goal-pin" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M12 22s7-7.2 7-12a7 7 0 1 0-14 0c0 4.8 7 12 7 12Z"></path>
+    <circle cx="12" cy="10" r="2.7"></circle>
+  </svg>
+
+  <div class="home-goal-title">Создать цель</div>
+</div>
+
+<div class="home-well right" id="rightWell" onclick="openRightWellEditor()">
+
+  <div class="right-well-content" id="rightWellContent">
+
+    <div class="right-well-km" id="rightWellKm">
+      0
+    </div>
+
+  </div>
+
+</div>
+</div>
+    <div class="home-scroll-block engine-block">
+
+      <div class="engine-main-circle">
+        <div class="engine-title">ENGINE</div>
+
+      <div class="engine-shift-counter">
+
+  <span class="engine-shift-text">
+    1 / 35
+  </span>
+
+<img
+  class="engine-car-image"
+src="./fluence-taxi.jpg"
+  alt=""
+>
+
+</div>
+
+        <div class="engine-money">
+          200 ₽ / 7000 ₽
+        </div>
+
+        <div class="engine-shift-label">
+          СМЕНА
+        </div>
+
+        <div class="engine-slot"></div>
+      </div>
+
+      <button class="engine-side-btn engine-plus-btn" type="button">
+        +
+      </button>
+
+      <button class="engine-side-btn engine-change-btn" type="button">
+        СМЕНА
+      </button>
+
+      <button class="engine-send-btn" type="button">
+        ОТПРАВИТЬ
+      </button>
+
+    </div>
+    <div class="home-scroll-block"></div>
+    <div class="home-scroll-block"></div>
+    <div class="home-scroll-block"></div>
+    <div class="home-scroll-block"></div>
+    <div class="home-scroll-block"></div>
+  </div>
+</section>
+      <section class="page" data-page="balance"></section>
+      <section class="page" data-page="budget"></section>
+      <section class="page" data-page="reports"></section>
+      <section class="page" data-page="more"></section>
+    </div>
+  </main>
+
+  <!-- =======================================================
+       10. ЗАКРЫТЫЕ СТРАНИЦЫ
+       ======================================================= -->
+  <section class="closed-page" id="closed-rideEditor"></section>
+  <section class="closed-page" id="closed-expensesEditor"></section>
+  <section class="closed-page" id="closed-leftWellEditor">
+
+  <div class="left-editor-page">
+
+    <div class="left-editor-card">
+
+      <label class="left-editor-label">
+        Основной пробег
+        <input id="leftTotalInput" class="left-editor-input" type="number" inputmode="numeric">
+      </label>
+
+      <label class="left-editor-label">
+        Дневной пробег
+        <input id="leftDayInput" class="left-editor-input" type="number" inputmode="numeric">
+      </label>
+
+      <div class="left-editor-preview-row">
+
+        <div class="home-well editor-preview-well">
+          <div class="left-well-content">
+            <div class="left-well-day" id="leftEditorDay">0</div>
+            <div class="left-well-total" id="leftEditorTotal">0</div>
+          </div>
+        </div>
+
+        <button class="engine-save-btn" type="button" onclick="saveLeftWellMileage()">
+          СОХРАНИТЬ
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+  <section class="closed-page" id="closed-goalEditor"></section>
+  <section class="closed-page" id="closed-rightWellEditor">
+
+  <div class="right-editor-page">
+
+    <div class="right-editor-card">
+
+      <label class="right-editor-label">
+        Название ТО
+        <input id="serviceTitleInput" class="right-editor-input" type="text">
+      </label>
+
+      <label class="right-editor-label">
+        Остаток километража
+        <input id="serviceRemainingInput" class="right-editor-input" type="number" inputmode="numeric">
+      </label>
+
+      <label class="right-editor-label">
+        Межсервисный интервал
+        <input id="serviceIntervalInput" class="right-editor-input" type="number" inputmode="numeric">
+      </label>
+
+      <div class="right-editor-save-row">
+        <button class="engine-save-btn" type="button" onclick="saveServiceItem()">
+          СОХРАНИТЬ
+        </button>
+      </div>
+
+      <div class="service-list" id="serviceList"></div>
+
+    </div>
+
+  </div>
+
+  <div class="service-modal" id="serviceModal">
+    <div class="service-modal-card">
+
+      <div class="service-modal-title" id="serviceModalTitle"></div>
+
+      <button class="service-modal-btn" type="button" onclick="completeSelectedService()">
+        ВЫПОЛНЕНО
+      </button>
+
+      <button class="service-modal-btn" type="button" onclick="deleteSelectedService()">
+        УДАЛИТЬ
+      </button>
+
+      <button class="service-modal-btn secondary" type="button" onclick="closeServiceModal()">
+        ЗАКРЫТЬ
+      </button>
+
+    </div>
+  </div>
+
+</section>
+
+  <!-- =======================================================
+       11. ЕДИНАЯ НИЖНЯЯ НАВИГАЦИЯ
+       ======================================================= -->
+  <nav class="bottom-nav">
+
+    <button class="nav-btn active" data-target="home" type="button">
+      <svg viewBox="0 0 34 34" aria-hidden="true">
+        <rect x="6.5" y="7.5" width="21" height="21" rx="1.1"/>
+        <path d="M6.5 13h21M11.5 4.7v6.1M22.5 4.7v6.1"/>
+        <text x="17" y="24" text-anchor="middle" class="calendar-num" id="navDay">18</text>
+      </svg>
+      <span>Главная</span>
+    </button>
+
+    <button class="nav-btn" data-target="balance" type="button">
+      <svg viewBox="0 0 34 34" aria-hidden="true">
+        <path d="M17 7.2v20.3"/>
+        <circle cx="17" cy="8.2" r="2.2"/>
+        <path d="M8.8 11.4h16.4"/>
+        <path d="M17 11.4 10.4 20.2"/>
+        <path d="M17 11.4 23.6 20.2"/>
+        <path d="M7.2 20.2h6.4"/>
+        <path d="M20.4 20.2h6.4"/>
+        <path d="M7.4 20.2c.5 2.5 1.8 3.7 3 3.7s2.5-1.2 3-3.7"/>
+        <path d="M20.6 20.2c.5 2.5 1.8 3.7 3 3.7s2.5-1.2 3-3.7"/>
+        <path d="M11.2 27.6h11.6"/>
+      </svg>
+      <span>Баланс</span>
+    </button>
+
+    <button class="nav-btn" data-target="budget" type="button">
+      <svg viewBox="0 0 34 34" aria-hidden="true">
+        <rect x="11" y="8.4" width="12" height="20" rx="2"/>
+        <rect x="14.2" y="5.2" width="5.6" height="3.2" rx="1"/>
+        <rect class="battery-fill" x="12.8" y="18.5" width="8.4" height="8.1" rx="1"/>
+      </svg>
+      <span>Бюджет</span>
+    </button>
+
+    <button class="nav-btn" data-target="reports" type="button">
+      <svg viewBox="0 0 34 34" aria-hidden="true">
+        <path d="M8.4 27V17.4M14.1 27V11.3M19.8 27V6.9M25.5 27V14.3M6.7 27h21.4"/>
+      </svg>
+      <span>Отчеты</span>
+    </button>
+
+    <button class="nav-btn" data-target="more" type="button">
+      <svg viewBox="0 0 34 34" aria-hidden="true">
+        <rect x="8.6" y="6.8" width="16.2" height="21.1" rx="1.3"/>
+        <rect x="11.2" y="9.8" width="16.2" height="21.1" rx="1.3"/>
+        <path d="M14.5 15.2h8.7M14.5 20h8.7M14.5 24.8h6.2"/>
+      </svg>
+      <span>Еще</span>
+    </button>
+
+  </nav>
+
+</div>
+
+<script>
+/* =========================================================
+   12. СПИСОК ОТКРЫТЫХ СТРАНИЦ
+   ========================================================= */
+const pages = ["home","balance","budget","reports","more"];
+
+/* =========================================================
+   13. СОСТОЯНИЕ ПРИЛОЖЕНИЯ
+   ========================================================= */
+let current = "home";
+let closed = null;
+let sx = 0;
+let sy = 0;
+let currentPeriod = "day";
+let leftWellTotalMileage = Number(localStorage.getItem("leftWellTotalMileage") || 0);
+let leftWellDayMileage = Number(localStorage.getItem("leftWellDayMileage") || 0);
+
+let serviceItems = JSON.parse(localStorage.getItem("serviceItems") || "[]");
+let selectedServiceId = null;
+
+/* =========================================================
+   14. ОСНОВНЫЕ DOM-ЭЛЕМЕНТЫ
+   ========================================================= */
+const header = document.getElementById("appHeader");
+const viewport = document.getElementById("viewport");
+const track = document.getElementById("track");
+const headerPageTitle = document.getElementById("headerPageTitle");
+
+/* =========================================================
+   15. ЗАКРЫТИЕ ЗАКРЫТЫХ СТРАНИЦ
+   ========================================================= */
+function closeClosed(){
+  document.querySelectorAll(".closed-page").forEach(page => {
+    page.classList.remove("active");
+  });
+  closed = null;
+}
+
+/* =========================================================
+   16. ПЕРЕКЛЮЧЕНИЕ ВЫСОТЫ ВЕРХНЕГО БЛОКА
+   ========================================================= */
+function setHeader(page){
+  const isHome = page === "home";
+  header.classList.toggle("main", isHome);
+  viewport.classList.toggle("main", isHome);
+}
+
+/* =========================================================
+   17. ПОДСВЕТКА АКТИВНОЙ КНОПКИ НАВИГАЦИИ
+   ========================================================= */
+function activateNav(page){
+  document.querySelectorAll(".nav-btn").forEach(button => {
+    button.classList.toggle("active", button.dataset.target === page);
+  });
+}
+
+/* =========================================================
+   18. ПЕРЕХОД НА ОТКРЫТУЮ СТРАНИЦУ
+   ========================================================= */
+function showPage(page){
+
+  const index = pages.indexOf(page);
+  if(index < 0) return;
+
+  closeClosed();
+  if(headerPageTitle){
+  headerPageTitle.textContent = "";
+}
+
+  updateDate();
+
+  current = page;
+
+  track.style.transform = `translateX(-${index * 100}vw)`;
+
+  setHeader(page);
+  activateNav(page);
+}
+
+/* =========================================================
+   19. ОТКРЫТИЕ ЗАКРЫТОЙ СТРАНИЦЫ
+   ========================================================= */
+function openClosed(id){
+  closeClosed();
+
+  const page = document.getElementById("closed-" + id);
+  if(!page) return;
+
+  closed = id;
+  page.classList.add("active");
+
+  header.classList.remove("main");
+  viewport.classList.remove("main");
+}
+function renderLeftWellMileage(){
+
+  document.querySelectorAll(".left-well-day").forEach(el => {
+    el.textContent = leftWellDayMileage;
+  });
+
+  document.querySelectorAll(".left-well-total").forEach(el => {
+    el.textContent = leftWellTotalMileage;
+  });
+
+  const totalInput = document.getElementById("leftTotalInput");
+  const dayInput = document.getElementById("leftDayInput");
+  const editorDay = document.getElementById("leftEditorDay");
+  const editorTotal = document.getElementById("leftEditorTotal");
+
+  if(totalInput) totalInput.value = leftWellTotalMileage || "";
+  if(dayInput) dayInput.value = leftWellDayMileage || "";
+
+  if(editorDay) editorDay.textContent = leftWellDayMileage;
+  if(editorTotal) editorTotal.textContent = leftWellTotalMileage;
+}
+
+function openLeftWellEditor(){
+
+  openClosed("leftWellEditor");
+  headerPageTitle.textContent = "ПРОБЕГ";
+
+  document.getElementById("mainWeekday").textContent = "ПРОБЕГ";
+  document.getElementById("mainMonthYear").textContent = "";
+
+  document.querySelectorAll(".left-well-day").forEach(el => {
+    el.textContent = leftWellDayMileage;
+  });
+
+  document.querySelectorAll(".left-well-total").forEach(el => {
+    el.textContent = leftWellTotalMileage;
+  });
+
+  const totalInput = document.getElementById("leftTotalInput");
+  const dayInput = document.getElementById("leftDayInput");
+
+  totalInput.value = "";
+  dayInput.value = "";
+
+  document.getElementById("leftEditorDay").textContent = 0;
+  document.getElementById("leftEditorTotal").textContent = 0;
+}
+
+function updateLeftEditorPreview(){
+
+  const totalInput = document.getElementById("leftTotalInput");
+  const dayInput = document.getElementById("leftDayInput");
+
+  const typedTotal =
+    totalInput.value === ""
+      ? leftWellTotalMileage
+      : Number(totalInput.value);
+
+  const day = Number(dayInput.value || 0);
+
+  document.getElementById("leftEditorDay").textContent = day;
+  document.getElementById("leftEditorTotal").textContent = typedTotal + day;
+}
+
+function saveLeftWellMileage(){
+
+  const totalInput = document.getElementById("leftTotalInput");
+  const dayInput = document.getElementById("leftDayInput");
+
+  const typedTotal = totalInput.value.trim();
+  const typedDay = dayInput.value.trim();
+
+  const baseTotal =
+    typedTotal === ""
+      ? leftWellTotalMileage
+      : Number(typedTotal);
+
+  const day =
+    typedDay === ""
+      ? 0
+      : Number(typedDay);
+
+  leftWellDayMileage = day;
+  leftWellTotalMileage = baseTotal + day;
+
+  localStorage.setItem("leftWellDayMileage", leftWellDayMileage);
+  localStorage.setItem("leftWellTotalMileage", leftWellTotalMileage);
+
+  document.querySelectorAll(".left-well-day").forEach(el => {
+    el.textContent = leftWellDayMileage;
+  });
+
+  document.querySelectorAll(".left-well-total").forEach(el => {
+    el.textContent = leftWellTotalMileage;
+  });
+
+  totalInput.value = "";
+  dayInput.value = "";
+
+  document.getElementById("leftEditorDay").textContent = leftWellDayMileage;
+  document.getElementById("leftEditorTotal").textContent = leftWellTotalMileage;
+
+  applyDailyMileageToServices(day);
+}
+/* =========================================================
+   19.2. ПРАВЫЙ КОЛОДЕЦ / ТО
+   ========================================================= */
+
+function saveServiceItems(){
+
+  localStorage.setItem(
+    "serviceItems",
+    JSON.stringify(serviceItems)
+  );
+
+}
+
+function sortServiceItems(){
+
+  serviceItems.sort((a,b) => {
+    return Number(a.remaining || 0) - Number(b.remaining || 0);
+  });
+
+}
+
+function getNearestService(){
+
+  if(!serviceItems.length) return null;
+
+  sortServiceItems();
+
+  return serviceItems[0];
+
+}
+
+function renderRightWell(){
+
+  const rightWell = document.getElementById("rightWell");
+  const rightWellContent = document.getElementById("rightWellContent");
+
+  if(!rightWell || !rightWellContent) return;
+
+  const nearest = getNearestService();
+
+  rightWell.classList.remove("warning");
+
+  if(!nearest){
+
+    rightWellContent.innerHTML = `
+      <div class="right-well-km">0</div>
+    `;
+
+    return;
+  }
+
+  const remaining = Number(nearest.remaining || 0);
+
+  if(remaining <= 100){
+
+    rightWell.classList.add("warning");
+
+    rightWellContent.innerHTML = `
+      <div class="right-well-alert">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M14.7 6.3a4.2 4.2 0 0 0-5.4 5.4L3.8 17.2a1.9 1.9 0 0 0 0 2.7 1.9 1.9 0 0 0 2.7 0l5.5-5.5a4.2 4.2 0 0 0 5.4-5.4l-2.8 2.8-2.7-2.7 2.8-2.8Z"></path>
+        </svg>
+
+        <div class="right-well-alert-title">
+          ${nearest.title}
+        </div>
+      </div>
+    `;
+
+    return;
+  }
+
+  rightWellContent.innerHTML = `
+    <div class="right-well-km">${remaining}</div>
+  `;
+
+}
+
+function renderServiceList(){
+
+  const list = document.getElementById("serviceList");
+  if(!list) return;
+
+  sortServiceItems();
+
+  if(!serviceItems.length){
+
+    list.innerHTML = "";
+    renderRightWell();
+    return;
+
+  }
+
+  list.innerHTML = serviceItems.map(item => {
+
+    const warningClass =
+      Number(item.remaining || 0) <= 100
+        ? " warning"
+        : "";
+
+    return `
+      <button class="service-item${warningClass}" type="button" onclick="openServiceModal('${item.id}')">
+        <div class="service-item-title">${item.title}</div>
+        <div class="service-item-km">Осталось: ${item.remaining} км / Интервал: ${item.interval} км</div>
+      </button>
+    `;
+
+  }).join("");
+
+  renderRightWell();
+
+}
+
+function openRightWellEditor(){
+
+  openClosed("rightWellEditor");
+
+  if(headerPageTitle){
+    headerPageTitle.textContent = "ТО";
+  }
+
+  renderServiceList();
+
+}
+
+function saveServiceItem(){
+
+  const titleInput = document.getElementById("serviceTitleInput");
+  const remainingInput = document.getElementById("serviceRemainingInput");
+  const intervalInput = document.getElementById("serviceIntervalInput");
+
+  const title = titleInput.value.trim();
+  const remaining = Number(remainingInput.value || 0);
+  const interval = Number(intervalInput.value || 0);
+
+  if(!title){
+    alert("Введите название ТО");
+    return;
+  }
+
+  if(remaining <= 0){
+    alert("Введите остаток километража");
+    return;
+  }
+
+  if(interval <= 0){
+    alert("Введите межсервисный интервал");
+    return;
+  }
+
+  serviceItems.push({
+    id:String(Date.now()),
+    title:title,
+    remaining:remaining,
+    interval:interval,
+    createdAt:new Date().toISOString()
+  });
+
+  saveServiceItems();
+
+  titleInput.value = "";
+  remainingInput.value = "";
+  intervalInput.value = "";
+
+  renderServiceList();
+
+}
+
+function applyDailyMileageToServices(dayMileage){
+
+  const day = Number(dayMileage || 0);
+
+  if(day <= 0) return;
+
+  serviceItems = serviceItems.map(item => {
+
+    const nextRemaining = Number(item.remaining || 0) - day;
+
+    return {
+      ...item,
+      remaining:Math.max(0,nextRemaining)
+    };
+
+  });
+
+  saveServiceItems();
+  renderServiceList();
+  renderRightWell();
+
+}
+
+function openServiceModal(id){
+
+  const item = serviceItems.find(service => service.id === id);
+  if(!item) return;
+
+  selectedServiceId = id;
+
+  const modal = document.getElementById("serviceModal");
+  const title = document.getElementById("serviceModalTitle");
+
+  if(title){
+    title.textContent = item.title + " — осталось " + item.remaining + " км";
+  }
+
+  if(modal){
+    modal.classList.add("active");
+  }
+
+}
+
+function closeServiceModal(){
+
+  selectedServiceId = null;
+
+  const modal = document.getElementById("serviceModal");
+
+  if(modal){
+    modal.classList.remove("active");
+  }
+
+}
+
+function completeSelectedService(){
+
+  if(!selectedServiceId) return;
+
+  serviceItems = serviceItems.map(item => {
+
+    if(item.id !== selectedServiceId) return item;
+
+    return {
+      ...item,
+      remaining:Number(item.interval || 0),
+      completedAt:new Date().toISOString()
+    };
+
+  });
+
+  saveServiceItems();
+  closeServiceModal();
+  renderServiceList();
+  renderRightWell();
+
+}
+
+function deleteSelectedService(){
+
+  if(!selectedServiceId) return;
+
+  serviceItems = serviceItems.filter(item => {
+    return item.id !== selectedServiceId;
+  });
+
+  saveServiceItems();
+  closeServiceModal();
+  renderServiceList();
+  renderRightWell();
+
+}
+/* =========================================================
+   20. ОБНОВЛЕНИЕ ЧИСЛА В ИКОНКЕ КАЛЕНДАРЯ
+   ========================================================= */
+function updateDate(){
+
+  const now = new Date();
+
+  const weekdays = [
+    "Воскресенье",
+    "Понедельник",
+    "Вторник",
+    "Среда",
+    "Четверг",
+    "Пятница",
+    "Суббота"
+  ];
+
+  const months = [
+    "января",
+    "февраля",
+    "марта",
+    "апреля",
+    "мая",
+    "июня",
+    "июля",
+    "августа",
+    "сентября",
+    "октября",
+    "ноября",
+    "декабря"
+  ];
+
+  const day = now.getDate();
+
+  const hours = String(now.getHours()).padStart(2,"0");
+
+  const minutes = String(now.getMinutes()).padStart(2,"0");
+
+  document.getElementById("navDay").textContent = day;
+
+  document.getElementById("mainDayNumber").textContent = day;
+
+  document.getElementById("mainWeekday").textContent =
+    weekdays[now.getDay()];
+
+  document.getElementById("mainMonthYear").textContent =
+    months[now.getMonth()] + " " + now.getFullYear();
+
+  document.getElementById("mainClock").textContent =
+    hours + ":" + minutes;
+}
+/* =========================================================
+   20.1. ТЕКУЩИЙ ПЕРИОД ГЛАВНОЙ СТРАНИЦЫ
+   ========================================================= */
+function setMainPeriod(period){
+
+  currentPeriod = period;
+
+  document.querySelectorAll(".period-tab").forEach(button => {
+
+    button.classList.toggle(
+      "active",
+      button.dataset.period === period
+    );
+
+  });
+
+  renderHomeByPeriod(period);
+
+}
+
+/* =========================================================
+   20.2. ОБНОВЛЕНИЕ ГЛАВНОЙ СТРАНИЦЫ ПО ПЕРИОДУ
+   ========================================================= */
+function renderHomeByPeriod(period){
+
+  /*
+    ПОКА ПУСТО.
+
+    ПОЗЖЕ СЮДА БУДЕТ ПОДКЛЮЧАТЬСЯ:
+    - доход;
+    - расход;
+    - поездки;
+    - цели;
+    - колодцы;
+    - статистика;
+    - отчеты.
+
+    И все это будет меняться
+    в зависимости от:
+    day / week / month / year
+  */
+
+}
+/* =========================================================
+   21. КЛИКИ ПО НИЖНЕЙ НАВИГАЦИИ
+   ========================================================= */
+document.querySelectorAll(".nav-btn").forEach(button => {
+  button.addEventListener("click", () => {
+    showPage(button.dataset.target);
+  });
+});
+/* =========================================================
+   21.1. КЛИКИ ПО КНОПКАМ ПЕРИОДА
+   ========================================================= */
+document.querySelectorAll(".period-tab").forEach(button => {
+
+  button.addEventListener("click", () => {
+
+    setMainPeriod(button.dataset.period);
+
+  });
+
+});
+document.addEventListener("input", event => {
+
+  if(
+    event.target.id === "leftTotalInput" ||
+    event.target.id === "leftDayInput"
+  ){
+    updateLeftEditorPreview();
+  }
+
+});
+/* =========================================================
+   22. СВАЙП: НАЧАЛО
+   ========================================================= */
+viewport.addEventListener("touchstart", event => {
+  if(closed) return;
+
+  sx = event.touches[0].clientX;
+  sy = event.touches[0].clientY;
+},{passive:true});
+
+/* =========================================================
+   23. СВАЙП: ЗАВЕРШЕНИЕ
+   ========================================================= */
+viewport.addEventListener("touchend", event => {
+  if(closed) return;
+
+  const dx = event.changedTouches[0].clientX - sx;
+  const dy = event.changedTouches[0].clientY - sy;
+
+  if(Math.abs(dx) < 55) return;
+  if(Math.abs(dx) < Math.abs(dy)) return;
+
+  let index = pages.indexOf(current);
+
+  if(dx < 0) index = Math.min(pages.length - 1, index + 1);
+  if(dx > 0) index = Math.max(0, index - 1);
+
+  showPage(pages[index]);
+},{passive:true});
+
+/* =========================================================
+   24. СТАРТ ПРИЛОЖЕНИЯ
+   ========================================================= */
+updateDate();
+
+setInterval(updateDate, 30000);
+
+showPage("home");
+
+setMainPeriod("day");
+renderLeftWellMileage();
+renderRightWell();
+renderServiceList();
+</script>
+</body>
+</html>
