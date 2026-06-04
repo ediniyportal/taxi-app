@@ -1,11 +1,11 @@
-const CACHE_NAME = 'taxi-finance-v1';
+const CACHE_NAME = 'taxi-finance-v2';
 
 const APP_FILES = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icon192.png',
-  './icon512.png'
+  '/taxi-app/',
+  '/taxi-app/index.html',
+  '/taxi-app/manifest.json',
+  '/taxi-app/icon192.png',
+  '/taxi-app/icon512.png'
 ];
 
 self.addEventListener('install', event => {
