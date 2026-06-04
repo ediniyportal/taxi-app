@@ -10610,46 +10610,9 @@ async function saveExpenseItem(){
 </script>
 
 <script>
-let deferredInstallPrompt = null;
-
-function showPwaDebug(text){
-  alert(
-    'PWA DEBUG\n\n' +
-    text +
-    '\n\norigin: ' + window.location.origin +
-    '\nprotocol: ' + window.location.protocol +
-    '\nserviceWorker: ' + ('serviceWorker' in navigator) +
-    '\ncontroller: ' + Boolean(navigator.serviceWorker && navigator.serviceWorker.controller)
-  );
-}
-
-window.addEventListener('beforeinstallprompt', event => {
-  event.preventDefault();
-  deferredInstallPrompt = event;
-
-  alert('PWA готово к установке. Можно ставить приложение.');
-});
-
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
-    navigator.serviceWorker
-      .register('./service-worker.js')
-      .then(registration => {
-        showPwaDebug(
-          'Service Worker зарегистрирован' +
-          '\nscope: ' + registration.scope +
-          '\nactive: ' + Boolean(registration.active) +
-          '\ninstalling: ' + Boolean(registration.installing) +
-          '\nwaiting: ' + Boolean(registration.waiting)
-        );
-      })
-      .catch(error => {
-        showPwaDebug('Ошибка Service Worker: ' + error.message);
-      });
-  });
-}else{
-  window.addEventListener('load', () => {
-    showPwaDebug('Service Worker не поддерживается браузером');
+    navigator.serviceWorker.register('./service-worker.js');
   });
 }
 </script>
