@@ -1,7 +1,7 @@
 {
   "name": "Такси Финансы",
   "short_name": "Такси",
-  "description": "Приложение для учёта поездок, доходов, расходов и баланса",
+  "description": "Учёт поездок, доходов, расходов и баланса",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -10,14 +10,10 @@
   "theme_color": "#2f4f4f",
   "icons": [
     {
-      "src": "icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "icons/icon-512.png",
+      "src": "icon512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
